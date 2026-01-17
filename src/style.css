@@ -1,0 +1,539 @@
+:root {
+    --primary: #1a365d;
+    --primary-light: #2c5282;
+    --accent: #3182ce;
+    --bg: #f7fafc;
+    --card-bg: #ffffff;
+    --text: #1a202c;
+    --text-muted: #718096;
+    --border: #e2e8f0;
+    --success: #38a169;
+    --warning: #d69e2e;
+    --danger: #e53e3e;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+    flex: 1;
+}
+
+header {
+    background: var(--primary);
+    color: white;
+    padding: 1rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo {
+    height: 40px;
+    width: auto;
+}
+
+header h1 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.term-select {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.5rem;
+}
+
+.term-select:hover {
+    background-color: rgba(255,255,255,0.25);
+}
+
+.term-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.4);
+}
+
+.term-select option {
+    background: var(--primary);
+    color: white;
+}
+
+footer {
+    background: var(--primary);
+    color: rgba(255,255,255,0.7);
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.8125rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-calendar {
+    background: var(--success);
+    color: white;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8125rem;
+}
+
+.btn-calendar:hover {
+    background: #2f855a;
+    transform: translateY(-1px);
+}
+
+.filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--border);
+    background: var(--card-bg);
+    border-radius: 25px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.filter-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.course-section {
+    margin-bottom: 1.5rem;
+}
+
+.course-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: var(--primary);
+    color: white;
+    border-radius: 10px 10px 0 0;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.course-header:hover {
+    background: var(--primary-light);
+}
+
+.course-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.course-code {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.course-name {
+    font-size: 0.875rem;
+    opacity: 0.85;
+}
+
+.course-count {
+    background: rgba(255,255,255,0.2);
+    padding: 0.125rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.75rem;
+}
+
+.course-items {
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+}
+
+.deliverable-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.deliverable-item:hover {
+    background: #f8fafc;
+}
+
+.deliverable-item:last-child {
+    border-bottom: none;
+}
+
+.deliverable-item.overdue {
+    border-left: 4px solid var(--danger);
+}
+
+.deliverable-item.soon {
+    border-left: 4px solid var(--warning);
+}
+
+.deliverable-info h3 {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin-bottom: 0.375rem;
+    color: var(--text);
+}
+
+.deliverable-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+}
+
+.due-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.status-badge {
+    padding: 0.125rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.status-upcoming {
+    background: #ebf8ff;
+    color: var(--accent);
+}
+
+.status-soon {
+    background: #fefcbf;
+    color: #975a16;
+}
+
+.status-overdue {
+    background: #fed7d7;
+    color: var(--danger);
+}
+
+.week-badge {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.deliverable-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem;
+    color: var(--text-muted);
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.hidden {
+    display: none !important;
+}
+
+.subscribe-all {
+    margin-bottom: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: var(--card-bg);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.subscribe-all-text {
+    font-size: 0.9375rem;
+    color: var(--text);
+    font-weight: 500;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    header {
+        padding: 0.875rem 1rem;
+    }
+
+    .header-content {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 0.75rem;
+    }
+
+    .header-left {
+        gap: 0.625rem;
+    }
+
+    .logo {
+        height: 32px;
+    }
+
+    header h1 {
+        font-size: 1rem;
+    }
+
+    .term-select {
+        padding: 0.4rem 0.75rem;
+        padding-right: 2rem;
+        font-size: 0.8125rem;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+
+    /* Horizontal scrolling filters */
+    .filters {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding-bottom: 0.5rem;
+        margin: 0 -1rem 1rem -1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .filters::-webkit-scrollbar {
+        display: none;
+    }
+
+    .filter-btn {
+        flex-shrink: 0;
+        padding: 0.625rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    /* Subscribe all card */
+    .subscribe-all {
+        flex-direction: column;
+        text-align: center;
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+
+    .subscribe-all-text {
+        font-size: 0.875rem;
+    }
+
+    .subscribe-all .btn-calendar {
+        width: 100%;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+    }
+
+    /* Course sections */
+    .course-section {
+        margin-bottom: 1rem;
+    }
+
+    .course-header {
+        padding: 0.875rem 1rem;
+        gap: 0.625rem;
+    }
+
+    .course-title {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .course-code {
+        font-size: 0.9375rem;
+    }
+
+    .course-name {
+        font-size: 0.8125rem;
+        width: 100%;
+        margin-top: 0.125rem;
+    }
+
+    .course-count {
+        font-size: 0.6875rem;
+        padding: 0.125rem 0.375rem;
+    }
+
+    .course-header .btn-calendar {
+        align-self: flex-start;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+    }
+
+    /* Deliverable items */
+    .deliverable-item {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+
+    .deliverable-info h3 {
+        font-size: 0.9375rem;
+        line-height: 1.4;
+        margin-bottom: 0.5rem;
+    }
+
+    .deliverable-meta {
+        gap: 0.5rem;
+        font-size: 0.8125rem;
+    }
+
+    .due-date {
+        width: 100%;
+        font-weight: 500;
+        color: var(--text);
+    }
+
+    .status-badge {
+        font-size: 0.625rem;
+        padding: 0.1875rem 0.5rem;
+    }
+
+    .week-badge {
+        font-size: 0.75rem;
+    }
+
+    .deliverable-actions {
+        margin-top: 0.25rem;
+    }
+
+    .deliverable-actions .btn-calendar {
+        width: 100%;
+        justify-content: center;
+        padding: 0.625rem 1rem;
+        font-size: 0.8125rem;
+    }
+
+    .btn-text {
+        display: inline;
+    }
+
+    /* Footer */
+    footer {
+        padding: 0.875rem;
+        font-size: 0.75rem;
+    }
+}
+
+/* Small phones */
+@media (max-width: 380px) {
+    header h1 {
+        font-size: 0.875rem;
+    }
+
+    .logo {
+        height: 28px;
+    }
+
+    .term-select {
+        padding: 0.375rem 0.625rem;
+        padding-right: 1.75rem;
+        font-size: 0.75rem;
+    }
+
+    .filter-btn {
+        padding: 0.5rem 0.875rem;
+        font-size: 0.8125rem;
+    }
+
+    .course-code {
+        font-size: 0.875rem;
+    }
+
+    .deliverable-info h3 {
+        font-size: 0.875rem;
+    }
+}

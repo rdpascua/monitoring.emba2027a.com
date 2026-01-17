@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMBA 2027A Deliverables</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="header-left">
+                <img src="./assets/logo.png" alt="AIM Logo" class="logo">
+                <h1>EMBA 2027A Deliverables</h1>
+            </div>
+            <select id="termSelect" class="term-select">
+                <!-- Populated by JS -->
+            </select>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading deliverables...</p>
+        </div>
+
+        <div id="deliverablesList" class="hidden">
+            <div class="filters" id="courseFilters">
+                <button class="filter-btn active" data-filter="all">All Courses</button>
+            </div>
+
+            <div class="subscribe-all">
+                <span class="subscribe-all-text">Add all deliverables to your calendar</span>
+                <button id="downloadAllBtn" class="btn btn-calendar">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Download All (.ics)
+                </button>
+            </div>
+
+            <div id="courseGroups"></div>
+        </div>
+    </main>
+
+    <footer>
+        <p>EMBA 2027A • Asian Institute of Management</p>
+    </footer>
+
+    <script type="module" src="./main.js"></script>
+</body>
+</html>

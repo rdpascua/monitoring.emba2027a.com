@@ -1,0 +1,15 @@
+{
+  "name": "emba-deliverables",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "wrangler pages deploy dist"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "wrangler": "^3.22.0"
+  }
+}
