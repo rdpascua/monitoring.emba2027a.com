@@ -598,6 +598,24 @@ body.dark-mode .term-select option {
     background: var(--card-bg);
 }
 
+body.dark-mode .filter-btn {
+    color: var(--text);
+    border-color: var(--border);
+}
+
+body.dark-mode .filter-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+body.dark-mode .view-btn {
+    color: var(--text-muted);
+}
+
+body.dark-mode .view-btn.active {
+    color: var(--text);
+}
+
 /* Mobile Responsive - iPhone optimized */
 @media (max-width: 768px) {
     .container {
