@@ -340,6 +340,267 @@ footer {
     font-weight: 500;
 }
 
+/* Header Right */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Dark Mode Toggle */
+.dark-mode-toggle {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 6px;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(255,255,255,0.25);
+}
+
+.icon-moon { display: none; }
+.icon-sun { display: block; }
+
+/* Stats Dashboard */
+.stats-dashboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 1.25rem;
+    text-align: center;
+    border: 1px solid var(--border);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-card.stat-upcoming .stat-number { color: var(--accent); }
+.stat-card.stat-soon .stat-number { color: var(--warning); }
+.stat-card.stat-overdue .stat-number { color: var(--danger); }
+
+/* Progress Bar */
+.progress-container {
+    margin-bottom: 1.5rem;
+}
+
+.progress-bar {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--success));
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    width: 0%;
+}
+
+.progress-text {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+/* Search Bar */
+.search-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    background: var(--card-bg);
+    color: var(--text);
+    transition: border-color 0.2s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+/* View Toggle */
+.view-toggle-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.view-toggle {
+    display: flex;
+    background: var(--border);
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.view-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+
+.view-btn.active {
+    background: var(--card-bg);
+    color: var(--text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.view-toggle-container .filters {
+    margin-bottom: 0;
+}
+
+/* Week Filters */
+.week-filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.week-btn {
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--border);
+    background: var(--card-bg);
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.week-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.week-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+/* Countdown */
+.countdown {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    background: var(--bg);
+}
+
+.countdown.urgent {
+    background: #fed7d7;
+    color: var(--danger);
+}
+
+.countdown.soon {
+    background: #fefcbf;
+    color: #975a16;
+}
+
+/* Dark Mode */
+body.dark-mode {
+    --primary: #1e3a5f;
+    --primary-light: #2d4a6f;
+    --accent: #4299e1;
+    --bg: #0f172a;
+    --card-bg: #1e293b;
+    --text: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border: #334155;
+    --success: #4ade80;
+    --warning: #fbbf24;
+    --danger: #f87171;
+}
+
+body.dark-mode .icon-sun { display: none; }
+body.dark-mode .icon-moon { display: block; }
+
+body.dark-mode header {
+    background: #0f172a;
+    border-bottom: 1px solid var(--border);
+}
+
+body.dark-mode footer {
+    background: #0f172a;
+    border-top: 1px solid var(--border);
+}
+
+body.dark-mode .course-header {
+    background: var(--primary);
+}
+
+body.dark-mode .course-header:hover {
+    background: var(--primary-light);
+}
+
+body.dark-mode .deliverable-item:hover {
+    background: #283548;
+}
+
+body.dark-mode .search-input {
+    background: var(--card-bg);
+    border-color: var(--border);
+}
+
+body.dark-mode .term-select option {
+    background: var(--card-bg);
+}
+
 /* Mobile Responsive - iPhone optimized */
 @media (max-width: 768px) {
     html, body {
