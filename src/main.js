@@ -7,6 +7,9 @@ import { terms, deliverables as allDeliverables } from './data.js'
 let currentTerm = terms[terms.length - 1] // Default to latest term
 let deliverables = []
 let currentFilter = 'all'
+let currentView = 'course' // 'course' or 'week'
+let searchQuery = ''
+let currentWeekFilter = 'all'
 
 // ============================================
 // DOM Elements
@@ -17,8 +20,19 @@ const elements = {
     loading: document.getElementById('loading'),
     deliverablesList: document.getElementById('deliverablesList'),
     courseFilters: document.getElementById('courseFilters'),
+    weekFilters: document.getElementById('weekFilters'),
     courseGroups: document.getElementById('courseGroups'),
     downloadAllBtn: document.getElementById('downloadAllBtn'),
+    darkModeToggle: document.getElementById('darkModeToggle'),
+    searchInput: document.getElementById('searchInput'),
+    viewToggle: document.querySelector('.view-toggle'),
+    // Stats
+    statTotal: document.getElementById('statTotal'),
+    statUpcoming: document.getElementById('statUpcoming'),
+    statDueSoon: document.getElementById('statDueSoon'),
+    statOverdue: document.getElementById('statOverdue'),
+    progressFill: document.getElementById('progressFill'),
+    progressText: document.getElementById('progressText'),
 }
 
 // ============================================
@@ -26,6 +40,9 @@ const elements = {
 // ============================================
 
 function init() {
+    // Initialize dark mode from localStorage
+    initDarkMode()
+
     // Populate term selector
     renderTermSelector()
 
@@ -37,10 +54,54 @@ function init() {
         const termId = e.target.value
         currentTerm = terms.find(t => t.id === termId)
         currentFilter = 'all'
+        currentWeekFilter = 'all'
         loadTermDeliverables(termId)
     })
 
     elements.downloadAllBtn.addEventListener('click', downloadAllICS)
+    elements.darkModeToggle.addEventListener('click', toggleDarkMode)
+    elements.searchInput.addEventListener('input', handleSearch)
+
+    // View toggle
+    elements.viewToggle.addEventListener('click', (e) => {
+        if (e.target.classList.contains('view-btn')) {
+            elements.viewToggle.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'))
+            e.target.classList.add('active')
+            currentView = e.target.dataset.view
+            updateViewState()
+            renderDeliverables()
+        }
+    })
+
+    // Start countdown update interval
+    setInterval(updateCountdowns, 60000) // Update every minute
+}
+
+function initDarkMode() {
+    const savedMode = localStorage.getItem('darkMode')
+    if (savedMode === 'true' || (!savedMode && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.body.classList.add('dark-mode')
+    }
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode')
+    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'))
+}
+
+function handleSearch(e) {
+    searchQuery = e.target.value.toLowerCase().trim()
+    renderDeliverables()
+}
+
+function updateViewState() {
+    if (currentView === 'course') {
+        elements.courseFilters.classList.remove('hidden')
+        elements.weekFilters.classList.add('hidden')
+    } else {
+        elements.courseFilters.classList.add('hidden')
+        elements.weekFilters.classList.remove('hidden')
+    }
 }
 
 function renderTermSelector() {
@@ -59,9 +120,47 @@ function loadTermDeliverables(termId) {
     }))
 
     renderFilters()
+    renderWeekFilters()
+    updateStats()
     renderDeliverables()
     elements.loading.classList.add('hidden')
     elements.deliverablesList.classList.remove('hidden')
+}
+
+// ============================================
+// Stats Dashboard
+// ============================================
+
+function updateStats() {
+    const now = new Date()
+    let upcoming = 0
+    let dueSoon = 0
+    let overdue = 0
+
+    deliverables.forEach(d => {
+        if (!d.dueDate) return
+        const diff = d.dueDate - now
+        const days = diff / (1000 * 60 * 60 * 24)
+
+        if (days < 0) {
+            overdue++
+        } else if (days < 7) {
+            dueSoon++
+        } else {
+            upcoming++
+        }
+    })
+
+    elements.statTotal.textContent = deliverables.length
+    elements.statUpcoming.textContent = upcoming
+    elements.statDueSoon.textContent = dueSoon
+    elements.statOverdue.textContent = overdue
+
+    // Calculate progress (based on past due items)
+    const total = deliverables.filter(d => d.dueDate).length
+    const progress = total > 0 ? Math.round((overdue / total) * 100) : 0
+    elements.progressFill.style.width = `${progress}%`
+    elements.progressText.textContent = `${progress}% of term completed (${overdue} of ${total} deliverables past due)`
 }
 
 // ============================================
@@ -97,11 +196,72 @@ function renderFilters() {
     })
 }
 
-function renderDeliverables() {
-    const filtered = currentFilter === 'all'
-        ? deliverables
-        : deliverables.filter(d => d.courseCode === currentFilter)
+function renderWeekFilters() {
+    const weeks = [...new Set(deliverables.map(d => d.week))].sort((a, b) => a - b)
 
+    elements.weekFilters.innerHTML = '<button class="filter-btn active" data-week="all">All Weeks</button>'
+
+    weeks.forEach(week => {
+        const btn = document.createElement('button')
+        btn.className = 'filter-btn'
+        if (currentWeekFilter === week) btn.classList.add('active')
+        btn.dataset.week = week
+        btn.textContent = `Week ${week}`
+        elements.weekFilters.appendChild(btn)
+    })
+
+    if (currentWeekFilter === 'all') {
+        elements.weekFilters.querySelector('[data-week="all"]').classList.add('active')
+    }
+
+    elements.weekFilters.addEventListener('click', (e) => {
+        if (e.target.classList.contains('filter-btn')) {
+            elements.weekFilters.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'))
+            e.target.classList.add('active')
+            currentWeekFilter = e.target.dataset.week === 'all' ? 'all' : parseInt(e.target.dataset.week)
+            renderDeliverables()
+        }
+    })
+}
+
+function getFilteredDeliverables() {
+    let filtered = deliverables
+
+    // Apply search filter
+    if (searchQuery) {
+        filtered = filtered.filter(d =>
+            d.title.toLowerCase().includes(searchQuery) ||
+            d.courseCode.toLowerCase().includes(searchQuery) ||
+            d.courseName.toLowerCase().includes(searchQuery) ||
+            (d.description && d.description.toLowerCase().includes(searchQuery))
+        )
+    }
+
+    // Apply course/week filter based on view
+    if (currentView === 'course') {
+        if (currentFilter !== 'all') {
+            filtered = filtered.filter(d => d.courseCode === currentFilter)
+        }
+    } else {
+        if (currentWeekFilter !== 'all') {
+            filtered = filtered.filter(d => d.week === currentWeekFilter)
+        }
+    }
+
+    return filtered
+}
+
+function renderDeliverables() {
+    const filtered = getFilteredDeliverables()
+
+    if (currentView === 'course') {
+        renderByCourse(filtered)
+    } else {
+        renderByWeek(filtered)
+    }
+}
+
+function renderByCourse(filtered) {
     // Group by course
     const grouped = {}
     filtered.forEach(d => {
@@ -110,6 +270,11 @@ function renderDeliverables() {
     })
 
     elements.courseGroups.innerHTML = ''
+
+    if (Object.keys(grouped).length === 0) {
+        elements.courseGroups.innerHTML = '<div class="no-results">No deliverables found</div>'
+        return
+    }
 
     Object.keys(grouped).sort().forEach(course => {
         const items = grouped[course]
@@ -151,7 +316,59 @@ function renderDeliverables() {
         elements.courseGroups.appendChild(section)
     })
 
-    // Add event listeners for individual item calendar buttons
+    attachItemEventListeners()
+}
+
+function renderByWeek(filtered) {
+    // Group by week
+    const grouped = {}
+    filtered.forEach(d => {
+        const week = d.week || 0
+        if (!grouped[week]) grouped[week] = []
+        grouped[week].push(d)
+    })
+
+    elements.courseGroups.innerHTML = ''
+
+    if (Object.keys(grouped).length === 0) {
+        elements.courseGroups.innerHTML = '<div class="no-results">No deliverables found</div>'
+        return
+    }
+
+    Object.keys(grouped).sort((a, b) => parseInt(a) - parseInt(b)).forEach(week => {
+        const items = grouped[week]
+        const section = document.createElement('div')
+        section.className = 'course-section'
+
+        section.innerHTML = `
+            <div class="course-header">
+                <div class="course-title">
+                    <span class="course-code">Week ${week}</span>
+                    <span class="course-name">${items.length} deliverables</span>
+                    <span class="course-count">${items.length}</span>
+                </div>
+            </div>
+            <div class="course-items">
+                ${items.map(item => renderDeliverableItem(item, true)).join('')}
+            </div>
+        `
+
+        // Add event listeners
+        const header = section.querySelector('.course-header')
+        const courseItems = section.querySelector('.course-items')
+        header.addEventListener('click', (e) => {
+            if (!e.target.closest('.btn-calendar')) {
+                courseItems.classList.toggle('hidden')
+            }
+        })
+
+        elements.courseGroups.appendChild(section)
+    })
+
+    attachItemEventListeners()
+}
+
+function attachItemEventListeners() {
     document.querySelectorAll('[data-item-id]').forEach(btn => {
         btn.addEventListener('click', () => {
             downloadSingleICS(parseInt(btn.dataset.itemId))
@@ -159,7 +376,7 @@ function renderDeliverables() {
     })
 }
 
-function renderDeliverableItem(item) {
+function renderDeliverableItem(item, showCourse = false) {
     const status = getStatus(item.dueDate)
     const dateStr = item.dueDate
         ? item.dueDate.toLocaleDateString('en-US', {
@@ -172,6 +389,8 @@ function renderDeliverableItem(item) {
         })
         : 'Date TBD'
 
+    const countdown = getCountdown(item.dueDate)
+
     return `
         <div class="deliverable-item ${status.class}">
             <div class="deliverable-info">
@@ -182,8 +401,9 @@ function renderDeliverableItem(item) {
                         ${dateStr}
                     </span>
                     <span class="status-badge status-${status.class}">${status.label}</span>
-                    <span class="week-badge">Week ${item.week}</span>
+                    ${showCourse ? `<span class="course-badge">${escapeHtml(item.courseCode)}</span>` : `<span class="week-badge">Week ${item.week}</span>`}
                 </div>
+                ${countdown ? `<div class="countdown" data-due="${item.dueDate.toISOString()}">${countdown}</div>` : ''}
             </div>
             <div class="deliverable-actions">
                 <button class="btn btn-calendar" data-item-id="${item.id}" title="Add to Calendar">
@@ -193,6 +413,41 @@ function renderDeliverableItem(item) {
             </div>
         </div>
     `
+}
+
+function getCountdown(dueDate) {
+    if (!dueDate) return null
+
+    const now = new Date()
+    const diff = dueDate - now
+
+    if (diff < 0) return null // Past due, no countdown
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+
+    if (days > 30) {
+        return null // Don't show countdown for far future items
+    } else if (days > 0) {
+        return `${days}d ${hours}h remaining`
+    } else if (hours > 0) {
+        return `${hours}h ${minutes}m remaining`
+    } else {
+        return `${minutes}m remaining`
+    }
+}
+
+function updateCountdowns() {
+    document.querySelectorAll('.countdown[data-due]').forEach(el => {
+        const dueDate = new Date(el.dataset.due)
+        const countdown = getCountdown(dueDate)
+        if (countdown) {
+            el.textContent = countdown
+        } else {
+            el.textContent = ''
+        }
+    })
 }
 
 function getStatus(dueDate) {
