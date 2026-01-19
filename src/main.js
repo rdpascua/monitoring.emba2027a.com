@@ -289,11 +289,19 @@ async function toggleNotifications() {
         elements.notifyToggle.classList.remove('notify-active')
         localStorage.setItem('notifications', 'false')
     } else {
-        // Enable notifications - request permission
+        // Ask user first before requesting browser permission
         if (!('Notification' in window)) {
             alert('This browser does not support notifications')
             return
         }
+
+        const userConfirmed = confirm(
+            'Enable deadline notifications?\n\n' +
+            'You will receive alerts when deliverables are due within 24 hours.\n\n' +
+            'Click OK to enable.'
+        )
+
+        if (!userConfirmed) return
 
         let permission = Notification.permission
         if (permission === 'default') {
