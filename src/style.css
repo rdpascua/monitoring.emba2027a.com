@@ -371,8 +371,8 @@ footer {
     gap: 0.75rem;
 }
 
-/* Dark Mode Toggle */
-.dark-mode-toggle {
+/* Header Buttons */
+.header-btn {
     background: rgba(255,255,255,0.15);
     border: 1px solid rgba(255,255,255,0.3);
     border-radius: 6px;
@@ -385,12 +385,22 @@ footer {
     transition: background 0.2s;
 }
 
-.dark-mode-toggle:hover {
+.header-btn:hover {
     background: rgba(255,255,255,0.25);
+}
+
+.header-btn.notify-active {
+    background: rgba(74, 222, 128, 0.3);
+    border-color: rgba(74, 222, 128, 0.5);
 }
 
 .icon-moon { display: none; }
 .icon-sun { display: block; }
+.icon-bell { display: block; }
+.icon-bell-off { display: none; }
+
+.header-btn.notify-active .icon-bell { display: none; }
+.header-btn.notify-active .icon-bell-off { display: block; }
 
 /* Stats Dashboard - Compact inline */
 .stats-dashboard {
@@ -649,7 +659,7 @@ body.dark-mode .view-btn.active {
         gap: 8px;
     }
 
-    .dark-mode-toggle {
+    .header-btn {
         padding: 8px;
     }
 

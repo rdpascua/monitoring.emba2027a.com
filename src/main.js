@@ -32,6 +32,7 @@ const elements = {
     courseGroups: document.getElementById('courseGroups'),
     downloadAllBtn: document.getElementById('downloadAllBtn'),
     darkModeToggle: document.getElementById('darkModeToggle'),
+    notifyToggle: document.getElementById('notifyToggle'),
     searchInput: document.getElementById('searchInput'),
     viewToggle: document.querySelector('.view-toggle'),
     statTotal: document.getElementById('statTotal'),
@@ -207,6 +208,8 @@ function formatTime(timeValue) {
 
 async function init() {
     initDarkMode()
+    initNotifications()
+    registerServiceWorker()
 
     // Try to fetch live data
     const liveData = await fetchAndParseExcel()
@@ -230,6 +233,7 @@ async function init() {
 
     elements.downloadAllBtn.addEventListener('click', downloadAllICS)
     elements.darkModeToggle.addEventListener('click', toggleDarkMode)
+    elements.notifyToggle.addEventListener('click', toggleNotifications)
     elements.searchInput.addEventListener('input', handleSearch)
 
     elements.viewToggle.addEventListener('click', (e) => {
@@ -243,6 +247,7 @@ async function init() {
     })
 
     setInterval(updateCountdowns, 60000)
+    setInterval(checkAndNotify, 60000 * 30) // Check every 30 minutes
 }
 
 function initDarkMode() {
@@ -255,6 +260,94 @@ function initDarkMode() {
 function toggleDarkMode() {
     document.body.classList.toggle('dark-mode')
     localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'))
+}
+
+// ============================================
+// PWA & Notifications
+// ============================================
+
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+            .then(() => console.log('Service Worker registered'))
+            .catch(err => console.warn('Service Worker registration failed:', err))
+    }
+}
+
+function initNotifications() {
+    const enabled = localStorage.getItem('notifications') === 'true'
+    if (enabled && Notification.permission === 'granted') {
+        elements.notifyToggle.classList.add('notify-active')
+    }
+}
+
+async function toggleNotifications() {
+    const currentlyEnabled = elements.notifyToggle.classList.contains('notify-active')
+
+    if (currentlyEnabled) {
+        // Disable notifications
+        elements.notifyToggle.classList.remove('notify-active')
+        localStorage.setItem('notifications', 'false')
+    } else {
+        // Enable notifications - request permission
+        if (!('Notification' in window)) {
+            alert('This browser does not support notifications')
+            return
+        }
+
+        let permission = Notification.permission
+        if (permission === 'default') {
+            permission = await Notification.requestPermission()
+        }
+
+        if (permission === 'granted') {
+            elements.notifyToggle.classList.add('notify-active')
+            localStorage.setItem('notifications', 'true')
+
+            // Send test notification
+            new Notification('Notifications Enabled', {
+                body: 'You will be notified about upcoming deadlines',
+                icon: '/icon-192.png'
+            })
+
+            // Check immediately
+            checkAndNotify()
+        } else {
+            alert('Please allow notifications in your browser settings')
+        }
+    }
+}
+
+function checkAndNotify() {
+    if (localStorage.getItem('notifications') !== 'true') return
+    if (Notification.permission !== 'granted') return
+
+    const now = new Date()
+    const notifiedKey = 'notified_' + now.toDateString()
+    const notified = JSON.parse(localStorage.getItem(notifiedKey) || '[]')
+
+    deliverables.forEach(d => {
+        if (!d.dueDate || notified.includes(d.id)) return
+
+        const diff = d.dueDate - now
+        const hours = diff / (1000 * 60 * 60)
+
+        // Notify if due within 24 hours
+        if (hours > 0 && hours <= 24) {
+            const timeStr = hours < 1
+                ? `${Math.round(hours * 60)} minutes`
+                : `${Math.round(hours)} hours`
+
+            new Notification(`[${d.courseCode}] Due Soon!`, {
+                body: `${d.title} is due in ${timeStr}`,
+                icon: '/icon-192.png',
+                tag: `deadline-${d.id}`
+            })
+
+            notified.push(d.id)
+            localStorage.setItem(notifiedKey, JSON.stringify(notified))
+        }
+    })
 }
 
 function handleSearch(e) {
